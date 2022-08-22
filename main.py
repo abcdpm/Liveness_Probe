@@ -18,46 +18,28 @@ logging.basicConfig(
 )
 
 
-def cf():
-    cf = configparser.ConfigParser()
-    filename = cf.read(r'./configs/Liveness_Probe.ini', encoding='utf-8')
-
-    # sections() 得到所有的section，以列表形式返回
-    sec = cf.sections()
-    print(sec)
-
-    # 得到section下的所有option
-    opt = cf.options("email")
-    print(opt)
-
-    # items 得到section的所有键值对
-    value = cf.items("email")
-    print(value)
-    print(dict(value))  # 转成字典类型1
-
-    # get(section,option) 得到section中的option值，返回string/int类型的结果
-    mysql_host = cf.get("email", "host")
-    mysql_password = cf.getint("email", "port")
-    print(mysql_host, mysql_password)
-
-
 def email_send(text):
+    # read config from Liveness_Probe.ini
+    cf = configparser.ConfigParser()
+    cf.read(r'./configs/Liveness_Probe.ini', encoding='utf-8')
+
+    # set the email configs
     msg = MIMEText(text, 'plain', 'utf-8')
-    msg['From'] = '靓仔 <xx@qq.com>'
-    msg['To'] = '靓仔 <xx@qq.com>'
-    msg['Subject'] = '您的程序已执行完毕！'
-    from_addr = 'xx@qq.com'
-    from_password = 'xxxxxxxxxxxxxx'
-    from_smtp_server = 'smtp.qq.com'
-    to_addr = 'xx@qq.com'
-    # QQ邮箱的SMTP服务需SSL加密，端口为465
-    server = smtplib.SMTP_SSL(from_smtp_server)
-    # 显示发送过程
-    server.set_debuglevel(1)
+    msg['From'] = cf.get("email", "from")
+    msg['To'] = cf.get("email", "to")
+    msg['Subject'] = cf.get("email", "subject")
+    from_addr = cf.get("email", "from_addr")
+    from_password = cf.get("email", "from_password")
+    from_smtp_server = cf.get("email", "from_smtp_server")
+    to_addr = cf.get("email", "to_addr")
+
     try:
+        server = smtplib.SMTP_SSL(from_smtp_server)
+        server.set_debuglevel(1)
         server.login(from_addr, from_password)
         server.sendmail(from_addr, [to_addr], msg.as_string())
         server.quit()
+        logging.info("邮件发送成功!")
     except Exception as e:
         logging.exception(f"main exception: {str(e)}")
 
@@ -85,7 +67,8 @@ def liveness_detect():
 
 
 if __name__ == '__main__':
-    liveness_detect()
+    email_send("test")
+    # liveness_detect()
     # my_scheduler = BlockingScheduler()
     # my_scheduler.add_job(liveness_detect, 'cron', minute='*/1')
     # my_scheduler.start()
