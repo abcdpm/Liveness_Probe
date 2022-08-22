@@ -8,6 +8,8 @@ from email.mime.text import MIMEText
 
 nyaa_rss_url = 'https://nyaa.si/?page=rss&q=%5BNC-Raws%5D+RWBY%EF%BC%9A%E5%86%B0%E9%9B%AA%E5%B8%9D%E5%9B%BD&c=0_0&f=0'
 dmhy_rss_url = 'https://share.dmhy.org/topics/rss/rss.xml?keyword=+%E5%96%B5%E8%90%8C%E5%A5%B6%E8%8C%B6%E5%B1%8B'
+nyaa_flag = True
+dmhy_flag = True
 
 logging.basicConfig(
     filename="./logs/Liveness_Probe.log",
@@ -45,30 +47,34 @@ def email_send(text):
 
 
 def liveness_detect():
+    global nyaa_flag, dmhy_flag
+
     try:
         data = requests.get(nyaa_rss_url)
         code = data.status_code
-        if code != 200:
-            logging.error("nyaa获取rss订阅异常")
-        else:
-            logging.info('{} nyaa_rss: {}'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), code))
+        logging.info('{} nyaa_rss: {}'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), code))
+        nyaa_flag = True
     except Exception as e:
-        logging.exception(f"main exception: {str(e)}")
+        if nyaa_flag:
+            nyaa_flag = False
+            email_send("nyaa获取rss订阅异常")
+            logging.exception(f"main exception: {str(e)}")
 
     try:
         data = requests.get(dmhy_rss_url)
         code = data.status_code
-        if code != 200:
-            logging.error('dmhy获取rss订阅异常')
-        else:
-            logging.info('{} dmhy_rss: {}'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), code))
+        logging.info('{} dmhy_rss: {}'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), code))
+        dmhy_flag = True
     except Exception as e:
-        logging.exception(f"main exception: {str(e)}")
+        if dmhy_flag:
+            dmhy_flag = False
+            email_send("dmhy获取rss订阅异常")
+            logging.exception(f"main exception: {str(e)}")
 
 
 if __name__ == '__main__':
-    email_send("test")
+    # email_send("test")
     # liveness_detect()
-    # my_scheduler = BlockingScheduler()
-    # my_scheduler.add_job(liveness_detect, 'cron', minute='*/1')
-    # my_scheduler.start()
+    my_scheduler = BlockingScheduler()
+    my_scheduler.add_job(liveness_detect, 'cron', minute='*/1')
+    my_scheduler.start()

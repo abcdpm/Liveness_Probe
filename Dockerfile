@@ -1,6 +1,8 @@
-FROM python:3.8-alpine
+FROM python:3.10-alpine
 
 RUN mkdir /appl && \
+    mkdir /appl/logs && \
+    mkdir /appl/configs && \
     apk add --no-cache bash git busybox-extras tzdata vim && \
     git clone https://github.com/abcdpm/Liveness_Probe.git "/appl" && \
     pip install -r ./Liveness_Probe/requirements.txt && \
