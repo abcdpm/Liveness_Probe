@@ -20,7 +20,7 @@ logging.basicConfig(
 )
 
 
-def email_send(text):
+def email_send(text, subject):
     # read config from Liveness_Probe.ini
     cf = configparser.ConfigParser()
     cf.read(r'./configs/Liveness_Probe.ini', encoding='utf-8')
@@ -29,7 +29,7 @@ def email_send(text):
     msg = MIMEText(text, 'plain', 'utf-8')
     msg['From'] = cf.get("email", "from")
     msg['To'] = cf.get("email", "to")
-    msg['Subject'] = cf.get("email", "subject")
+    msg['Subject'] = subject
     from_addr = cf.get("email", "from_addr")
     from_password = cf.get("email", "from_password")
     from_smtp_server = cf.get("email", "from_smtp_server")
@@ -53,22 +53,28 @@ def liveness_detect():
         data = requests.get(nyaa_rss_url)
         code = data.status_code
         logging.info('{} nyaa_rss: {}'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), code))
-        nyaa_flag = True
+        if not nyaa_flag:
+            nyaa_flag = True
+            email_send("nyaa获取rss恢复正常", "[自动发送]-RSS订阅恢复正常")
+            logging.info("nyaa获取rss恢复正常")
     except Exception as e:
         if nyaa_flag:
             nyaa_flag = False
-            email_send("nyaa获取rss订阅异常")
+            email_send("nyaa获取rss订阅异常", "[自动发送]-RSS订阅异常")
             logging.exception(f"main exception: {str(e)}")
 
     try:
         data = requests.get(dmhy_rss_url)
         code = data.status_code
         logging.info('{} dmhy_rss: {}'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), code))
-        dmhy_flag = True
+        if not dmhy_flag:
+            dmhy_flag = True
+            email_send("dmhy获取rss恢复正常", "[自动发送]-RSS订阅恢复正常")
+            logging.info("dmhy获取rss恢复正常")
     except Exception as e:
         if dmhy_flag:
             dmhy_flag = False
-            email_send("dmhy获取rss订阅异常")
+            email_send("dmhy获取rss订阅异常", "[自动发送]-RSS订阅异常")
             logging.exception(f"main exception: {str(e)}")
 
 
