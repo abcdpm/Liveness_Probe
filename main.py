@@ -73,8 +73,6 @@ def liveness_detect():
 
 
 if __name__ == '__main__':
-    # email_send("test")
-    # liveness_detect()
     my_scheduler = BlockingScheduler()
     my_scheduler.add_job(liveness_detect, 'cron', minute='*/1')
     my_scheduler.start()
