@@ -33,7 +33,7 @@ def cf():
     # items 得到section的所有键值对
     value = cf.items("email")
     print(value)
-    print(dict(value))  # 转成字典类型
+    print(dict(value))  # 转成字典类型1
 
     # get(section,option) 得到section中的option值，返回string/int类型的结果
     mysql_host = cf.get("email", "host")
