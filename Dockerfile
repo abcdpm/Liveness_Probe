@@ -5,9 +5,11 @@ RUN mkdir /appl && \
     git clone https://github.com/abcdpm/Liveness_Probe.git "/appl" && \
     pip install -r /appl/requirements.txt && \
     mkdir /appl/logs && \
-    echo "Liveness_Probe Application Starts." >> /appl/logs/Liveness_Probe.log && \
     mkdir /appl/configs && \
-    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Liveness_Probe Application Starts." >> /appl/logs/Liveness_Probe.log && \
+    chmod +x /appl/run.sh
+
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo Asia/Shanghai > /etc/timezone && \
     apk del tzdata
 
