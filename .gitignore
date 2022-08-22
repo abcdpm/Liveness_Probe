@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+/configs/Liveness_Probe.ini
+/logs/Liveness_Probe.log
