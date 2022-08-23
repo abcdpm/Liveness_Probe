@@ -6,8 +6,8 @@ import smtplib
 import configparser
 from email.mime.text import MIMEText
 
-nyaa_rss_url = 'https://nyaa.si/?page=rss&q=%5BNC-Raws%5D+RWBY%EF%BC%9A%E5%86%B0%E9%9B%AA%E5%B8%9D%E5%9B%BD&c=0_0&f=0'
-dmhy_rss_url = 'https://share.dmhy.org/topics/rss/rss.xml?keyword=+%E5%96%B5%E8%90%8C%E5%A5%B6%E8%8C%B6%E5%B1%8B'
+nyaa_rss_url = 'https://nyaa.si/?page=rss&q=Kanojo+Okarishimasu&c=0_0&f=0'
+dmhy_rss_url = 'https://share.dmhy.org/topics/rss/rss.xml?keyword=Kanojo+Okarishimasu'
 nyaa_flag = True
 dmhy_flag = True
 
